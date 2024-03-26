@@ -22,7 +22,7 @@ impl <T> SortMutex<T> {
     }
 
     /// Request to lock this lock.
-    pub fn request(&self) -> SortMutexGuard<T> {
+    pub fn lock(&self) -> SortMutexGuard<T> {
         SortMutexGuard {
             lock: self
         }
@@ -59,7 +59,7 @@ mod tests {
         let lock1 = SortMutex::new(1);
         let lock2 = SortMutex::new(2);
 
-        let (guard1, guard2) = (lock1.request(), lock2.request()).lock_all();
+        let (guard1, guard2) = (lock1.lock(), lock2.lock()).lock_all();
 
         println!("{} {}", guard1, guard2);
     }
@@ -79,7 +79,7 @@ mod tests {
 
         let thread1 = thread::spawn(move || {
             for _ in 0..count {
-                let (mut guard1, mut guard2) = (lock1.request(), lock2.request()).lock_all();
+                let (mut guard1, mut guard2) = (lock1.lock(), lock2.lock()).lock_all();
                
                 *guard1 += 1;
                 *guard2 += 2;
@@ -87,7 +87,7 @@ mod tests {
         });
         let thread2 = thread::spawn(move || {
             for _ in 0..count {
-                let (mut guard2, mut guard1) = (lock2b.request(), lock1b.request()).lock_all();
+                let (mut guard2, mut guard1) = (lock2b.lock(), lock1b.lock()).lock_all();
                
                 *guard1 += 1;
                 *guard2 += 2;
@@ -96,8 +96,8 @@ mod tests {
         thread1.join()?;
         thread2.join()?;
 
-        assert_eq!(2 * count, *lock1c.request().lock_all());
-        assert_eq!(4 * count, *lock2c.request().lock_all());
+        assert_eq!(2 * count, *lock1c.lock().lock_all());
+        assert_eq!(4 * count, *lock2c.lock().lock_all());
 
         Ok(())
     }
