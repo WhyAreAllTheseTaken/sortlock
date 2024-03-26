@@ -1,7 +1,9 @@
 use std::sync::atomic::{AtomicUsize, Ordering};
 
+/// The next sort key to use.
 static NEXT_KEY: AtomicUsize = AtomicUsize::new(0);
 
+/// A sort key for sorting locks.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct SortKey(usize);
 
