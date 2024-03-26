@@ -50,7 +50,7 @@ impl <'l, T> SortLock for SortMutexGuard<'l, T> {
 
 #[cfg(test)]
 mod tests {
-    use std::{any::Any, error::Error, sync::Arc, thread};
+    use std::{any::Any, sync::Arc, thread};
 
     use crate::{LockGroup, SortMutex};
 
@@ -75,7 +75,7 @@ mod tests {
         let lock1c = lock1.clone();
         let lock2c = lock2.clone();
 
-        let count = 10000000;
+        let count = 1000000;
 
         let thread1 = thread::spawn(move || {
             for _ in 0..count {

@@ -1,8 +1,10 @@
 mod mutex;
 mod key;
+mod rwlock;
 
 pub use key::SortKey;
 pub use mutex::{SortMutex, SortMutexGuard};
+pub use rwlock::{SortRwLock, SortReadGuard, SortWriteGuard};
 
 /// A lock that can be locked by sorting.
 pub trait SortLock {
