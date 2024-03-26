@@ -1,6 +1,6 @@
 use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 
-use crate::{SortKey, SortLock};
+use crate::{SortKey, SortGuard};
 
 /// An exclusive that can be locked in order.
 pub struct SortRwLock<T> {
@@ -42,7 +42,7 @@ pub struct SortReadGuard<'l, T> {
     lock: &'l SortRwLock<T>,
 }
 
-impl <'l, T> SortLock for SortReadGuard<'l, T> {
+impl <'l, T> SortGuard for SortReadGuard<'l, T> {
     type Guard = RwLockReadGuard<'l, T>;
 
     fn sort_key(&self) -> SortKey {
@@ -61,7 +61,7 @@ pub struct SortWriteGuard<'l, T> {
     lock: &'l SortRwLock<T>,
 }
 
-impl <'l, T> SortLock for SortWriteGuard<'l, T> {
+impl <'l, T> SortGuard for SortWriteGuard<'l, T> {
     type Guard = RwLockWriteGuard<'l, T>;
 
     fn sort_key(&self) -> SortKey {
@@ -78,7 +78,7 @@ impl <'l, T> SortLock for SortWriteGuard<'l, T> {
 mod tests {
     use std::{any::Any, sync::Arc, thread};
 
-    use crate::{SortRwLock, LockGroup};
+    use crate::{SortRwLock, SortLockGroup};
 
     #[test]
     fn test_lock2() {

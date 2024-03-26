@@ -1,6 +1,6 @@
 use std::sync::{Mutex, MutexGuard};
 
-use crate::{SortKey, SortLock};
+use crate::{SortKey, SortGuard};
 
 /// An exclusive that can be locked in order.
 pub struct SortMutex<T> {
@@ -35,7 +35,7 @@ pub struct SortMutexGuard<'l, T> {
     lock: &'l SortMutex<T>,
 }
 
-impl <'l, T> SortLock for SortMutexGuard<'l, T> {
+impl <'l, T> SortGuard for SortMutexGuard<'l, T> {
     type Guard = MutexGuard<'l, T>;
 
     fn sort_key(&self) -> SortKey {
@@ -52,7 +52,7 @@ impl <'l, T> SortLock for SortMutexGuard<'l, T> {
 mod tests {
     use std::{any::Any, sync::Arc, thread};
 
-    use crate::{LockGroup, SortMutex};
+    use crate::{SortLockGroup, SortMutex};
 
     #[test]
     fn test_lock2() {
