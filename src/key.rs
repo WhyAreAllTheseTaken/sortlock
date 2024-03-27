@@ -4,8 +4,17 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 static NEXT_KEY: AtomicUsize = AtomicUsize::new(0);
 
 /// A sort key for sorting locks.
-///
 /// This must be unique to each lock.
+///
+/// A unique key can be generated with `SortKey::new`.
+/// ```
+/// use sortlock::SortKey;
+///
+/// let key = SortKey::new();
+/// let key2 = SortKey::new();
+///
+/// assert_ne!(key, key2);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct SortKey(usize);
 
