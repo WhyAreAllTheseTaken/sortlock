@@ -1,6 +1,6 @@
-use std::sync::{Mutex, MutexGuard};
+use std::{fmt::{self, Debug, Display, Formatter}, sync::{Mutex, MutexGuard}};
 
-use crate::{SortKey, SortableLock};
+use crate::{LockGroup, SortKey, SortableLock};
 
 /// A sortable lock that ensures exclusive access to a resource. 
 /// This is a sortable version of rust's `Mutex` type.
@@ -64,6 +64,24 @@ impl <T> SortMutex<T> {
         SortMutexGuard {
             lock: self
         }
+    }
+}
+
+impl <T: Debug> Debug for SortMutex<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        self.lock().lock_all().fmt(f)
+    }
+}
+
+impl <T: Display> Display for SortMutex<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        self.lock().lock_all().fmt(f)
+    }
+}
+
+impl <T: Default> Default for SortMutex<T> {
+    fn default() -> Self {
+        Self::new(T::default())
     }
 }
 

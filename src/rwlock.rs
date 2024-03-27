@@ -1,6 +1,6 @@
-use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
+use std::{fmt::{self, Debug, Display, Formatter}, sync::{RwLock, RwLockReadGuard, RwLockWriteGuard}};
 
-use crate::{SortKey, SortableLock};
+use crate::{LockGroup, SortKey, SortableLock};
 
 /// A sortable lock that allows either exclusive write access or shared read access. 
 /// This is a sortable version of rust's `RwLock` type.
@@ -86,6 +86,24 @@ impl <T> SortRwLock<T> {
         SortWriteGuard {
             lock: self
         }
+    }
+}
+
+impl <T: Debug> Debug for SortRwLock<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        self.read().lock_all().fmt(f)
+    }
+}
+
+impl <T: Display> Display for SortRwLock<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        self.read().lock_all().fmt(f)
+    }
+}
+
+impl <T: Default> Default for SortRwLock<T> {
+    fn default() -> Self {
+        Self::new(T::default())
     }
 }
 
