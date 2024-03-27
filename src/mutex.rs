@@ -2,7 +2,41 @@ use std::sync::{Mutex, MutexGuard};
 
 use crate::{SortKey, SortableLock};
 
-/// An exclusive that can be locked in order.
+/// A sortable lock that ensures exclusive access to a resource. 
+/// This is a sortable version of rust's `Mutex` type.
+///
+/// Locking looks a little different to `Mutex`, as this lock allows sorting with other locks
+/// through the use of `lock_all`.
+/// ```
+/// use sortlock::{SortMutex, LockGroup};
+///
+/// let lock = SortMutex::new("some value");
+///
+/// let guard = lock.lock().lock_all();
+/// println!("{}", *guard);
+/// ```
+///
+/// With multiple locks this ensures that locks are always locked in the same order:
+/// ```
+/// use sortlock::{SortMutex, LockGroup};
+///
+/// let lock1 = SortMutex::new("some value");
+/// let lock2 = SortMutex::new("some other value");
+///
+/// // Here lock1 is locked then lock2.
+/// let (guard1, guard2) = (lock1.lock(), lock2.lock()).lock_all();
+/// println!("{}", *guard1);
+/// println!("{}", *guard2);
+///
+/// // Unlock so we can lock again.
+/// drop(guard1);
+/// drop(guard2);
+///
+/// // Despite the order change the same is true here.
+/// let (guard2, guard1) = (lock2.lock(), lock1.lock()).lock_all();
+/// println!("{}", *guard1);
+/// println!("{}", *guard2);
+/// ```
 pub struct SortMutex<T> {
     /// The internal mutex.
     mutex: Mutex<T>,
@@ -21,7 +55,11 @@ impl <T> SortMutex<T> {
         }
     }
 
-    /// Request to lock this lock.
+    /// Requests to lock this lock.
+    /// This method returns a guard which can be used with `lock_all` to perform a sorted lock.
+    ///
+    /// # Panicking
+    /// The guard will panic when locked if this lock becomes poisoned.
     pub fn lock(&self) -> SortMutexGuard<T> {
         SortMutexGuard {
             lock: self
@@ -44,7 +82,7 @@ impl <'l, T> SortableLock for SortMutexGuard<'l, T> {
 
     fn lock_presorted(&self) -> Self::Guard {
         self.lock.mutex.lock()
-            .expect("Failed to lock mutex.")
+            .expect("Failed to lock mutex: mutex is poisoned.")
     }
 }
 
