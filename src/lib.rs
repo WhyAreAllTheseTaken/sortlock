@@ -6,36 +6,43 @@ pub use key::SortKey;
 pub use mutex::{SortMutex, SortMutexGuard};
 pub use rwlock::{SortRwLock, SortReadGuard, SortWriteGuard};
 
-/// A lock that can be locked by sorting.
-pub trait SortGuard {
-    /// The type of the lock once locked.
+/// A lock that can be locked in a way that ensures that multiple locks are always locked in the
+/// same order..
+pub trait SortableLock {
+    /// The type of the lock guard once locked.
     type Guard;
 
     /// Gets the sort key of the lock.
     fn sort_key(&self) -> SortKey;
     
     /// Lock this lock.
-    fn lock(&self) -> Self::Guard;
+    ///
+    /// This method assumes that lock sorting has already been done.
+    /// `lock_all` from `LockGroup` should be used if you want to lock with sorting. 
+    fn lock_presorted(&self) -> Self::Guard;
 }
 
 /// A group of values that can be locked.
-pub trait SortLockGroup {
+pub trait LockGroup {
     /// The type of the group once locked.
     type Locked;
 
     /// Lock all items in the group.
+    ///
+    /// The locking order will be consistent regardless of the order of the locks within in this
+    /// group.
     fn lock_all(self) -> Self::Locked;
 }
 
-impl <T: SortGuard> SortLockGroup for T {
+impl <T: SortableLock> LockGroup for T {
     type Locked = T::Guard;
 
     fn lock_all(self) -> Self::Locked {
-        self.lock()
+        self.lock_presorted()
     }
 }
 
-impl <T1: SortGuard, T2: SortGuard> SortLockGroup for (T1, T2) {
+impl <T1: SortableLock, T2: SortableLock> LockGroup for (T1, T2) {
     type Locked = (T1::Guard, T2::Guard);
 
     fn lock_all(self) -> Self::Locked {
@@ -47,8 +54,8 @@ impl <T1: SortGuard, T2: SortGuard> SortLockGroup for (T1, T2) {
 
         for (i, _) in locks {
             match i {
-                0 => guards.0 = Some(self.0.lock()),
-                1 => guards.1 = Some(self.1.lock()),
+                0 => guards.0 = Some(self.0.lock_presorted()),
+                1 => guards.1 = Some(self.1.lock_presorted()),
                 _ => unreachable!(),
             }
         }
@@ -57,7 +64,7 @@ impl <T1: SortGuard, T2: SortGuard> SortLockGroup for (T1, T2) {
     }
 }
 
-impl <T1: SortGuard, T2: SortGuard, T3: SortGuard> SortLockGroup for (T1, T2, T3) {
+impl <T1: SortableLock, T2: SortableLock, T3: SortableLock> LockGroup for (T1, T2, T3) {
     type Locked = (T1::Guard, T2::Guard, T3::Guard);
 
     fn lock_all(self) -> Self::Locked {
@@ -69,9 +76,9 @@ impl <T1: SortGuard, T2: SortGuard, T3: SortGuard> SortLockGroup for (T1, T2, T3
 
         for (i, _) in locks {
             match i {
-                0 => guards.0 = Some(self.0.lock()),
-                1 => guards.1 = Some(self.1.lock()),
-                2 => guards.2 = Some(self.2.lock()),
+                0 => guards.0 = Some(self.0.lock_presorted()),
+                1 => guards.1 = Some(self.1.lock_presorted()),
+                2 => guards.2 = Some(self.2.lock_presorted()),
                 _ => unreachable!(),
             }
         }
@@ -80,7 +87,7 @@ impl <T1: SortGuard, T2: SortGuard, T3: SortGuard> SortLockGroup for (T1, T2, T3
     }
 }
 
-impl <T1: SortGuard, T2: SortGuard, T3: SortGuard, T4: SortGuard> SortLockGroup for (T1, T2, T3, T4) {
+impl <T1: SortableLock, T2: SortableLock, T3: SortableLock, T4: SortableLock> LockGroup for (T1, T2, T3, T4) {
     type Locked = (T1::Guard, T2::Guard, T3::Guard, T4::Guard);
 
     fn lock_all(self) -> Self::Locked {
@@ -97,10 +104,10 @@ impl <T1: SortGuard, T2: SortGuard, T3: SortGuard, T4: SortGuard> SortLockGroup 
 
         for (i, _) in locks {
             match i {
-                0 => guards.0 = Some(self.0.lock()),
-                1 => guards.1 = Some(self.1.lock()),
-                2 => guards.2 = Some(self.2.lock()),
-                3 => guards.3 = Some(self.3.lock()),
+                0 => guards.0 = Some(self.0.lock_presorted()),
+                1 => guards.1 = Some(self.1.lock_presorted()),
+                2 => guards.2 = Some(self.2.lock_presorted()),
+                3 => guards.3 = Some(self.3.lock_presorted()),
                 _ => unreachable!(),
             }
         }
@@ -114,7 +121,7 @@ impl <T1: SortGuard, T2: SortGuard, T3: SortGuard, T4: SortGuard> SortLockGroup 
     }
 }
 
-impl <T1: SortGuard, T2: SortGuard, T3: SortGuard, T4: SortGuard, T5: SortGuard> SortLockGroup for (T1, T2, T3, T4, T5) {
+impl <T1: SortableLock, T2: SortableLock, T3: SortableLock, T4: SortableLock, T5: SortableLock> LockGroup for (T1, T2, T3, T4, T5) {
     type Locked = (T1::Guard, T2::Guard, T3::Guard, T4::Guard, T5::Guard);
 
     fn lock_all(self) -> Self::Locked {
@@ -132,11 +139,11 @@ impl <T1: SortGuard, T2: SortGuard, T3: SortGuard, T4: SortGuard, T5: SortGuard>
 
         for (i, _) in locks {
             match i {
-                0 => guards.0 = Some(self.0.lock()),
-                1 => guards.1 = Some(self.1.lock()),
-                2 => guards.2 = Some(self.2.lock()),
-                3 => guards.3 = Some(self.3.lock()),
-                4 => guards.4 = Some(self.4.lock()),
+                0 => guards.0 = Some(self.0.lock_presorted()),
+                1 => guards.1 = Some(self.1.lock_presorted()),
+                2 => guards.2 = Some(self.2.lock_presorted()),
+                3 => guards.3 = Some(self.3.lock_presorted()),
+                4 => guards.4 = Some(self.4.lock_presorted()),
                 _ => unreachable!(),
             }
         }
