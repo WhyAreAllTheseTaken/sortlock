@@ -2,6 +2,14 @@
 name = "sortlock"
 version = "0.0.0"
 edition = "2021"
+license = "BSD-3-Clause"
+description = "A crate providing ordered locking."
+homepage = "https://crates.io/crates/sortlock"
+repository = "https://github.com/Tomaso2468/sortlock"
+documentation = "https://docs.rs/sortlock"
+readme = "README.md"
+keywords = ["concurrency"]
+categories = ["concurrency"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
