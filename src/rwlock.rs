@@ -2,9 +2,54 @@ use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 
 use crate::{SortKey, SortableLock};
 
-/// An exclusive that can be locked in order.
+/// A sortable lock that allows either exclusive write access or shared read access. 
+/// This is a sortable version of rust's `RwLock` type.
+///
+/// Locking looks a little different to `RwLock`, as this lock allows sorting with other locks
+/// through the use of `lock_all`. Locking for reading can be performed with `read` while locking
+/// for writing can be performed with `write`.
+/// ```
+/// use sortlock::{SortRwLock, LockGroup};
+///
+/// let lock = SortRwLock::new("some value");
+///
+/// let guard = lock.read().lock_all();
+/// println!("{}", *guard);
+/// ```
+/// ```
+/// use sortlock::{SortRwLock, LockGroup};
+///
+/// let lock = SortRwLock::new(1);
+///
+/// let mut guard = lock.write().lock_all();
+/// *guard += 1;
+/// assert_eq!(2, *guard);
+/// ```
+///
+/// With multiple locks this ensures that locks are always locked in the same order.
+/// This occurs regardless of whether the lock was locked for reading or writing.
+/// ```
+/// use sortlock::{SortRwLock, LockGroup};
+///
+/// let lock1 = SortRwLock::new(100);
+/// let lock2 = SortRwLock::new(200);
+///
+/// // Here lock1 is locked then lock2.
+/// let (guard1, mut guard2) = (lock1.read(), lock2.write()).lock_all();
+/// println!("{}", *guard1);
+/// *guard2 += 1;
+///
+/// // Unlock so we can lock again.
+/// drop(guard1);
+/// drop(guard2);
+///
+/// // Despite the order change the same is true here.
+/// let (guard2, mut guard1) = (lock2.read(), lock1.write()).lock_all();
+/// *guard1 += 1;
+/// println!("{}", *guard2);
+/// ```
 pub struct SortRwLock<T> {
-    /// The internal mutex.
+    /// The internal lock.
     mutex: RwLock<T>,
     /// The sort key for this lock.
     key: SortKey,
@@ -21,14 +66,22 @@ impl <T> SortRwLock<T> {
         }
     }
 
-    /// Request to lock this lock for reading.
+    /// Requests to lock this lock for reading.
+    /// This method returns a guard which can be used with `lock_all` to perform a sorted lock.
+    ///
+    /// # Panicking
+    /// The guard will panic when locked if this lock becomes poisoned.
     pub fn read(&self) -> SortReadGuard<T> {
         SortReadGuard {
             lock: self
         }
     }
     
-    /// Request to lock this lock for writing.
+    /// Requests to lock this lock for writing.
+    /// This method returns a guard which can be used with `lock_all` to perform a sorted lock.
+    ///
+    /// # Panicking
+    /// The guard will panic when locked if this lock becomes poisoned.
     pub fn write(&self) -> SortWriteGuard<T> {
         SortWriteGuard {
             lock: self
