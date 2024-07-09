@@ -200,3 +200,246 @@ impl <T1: SortableLock, T2: SortableLock, T3: SortableLock, T4: SortableLock, T5
     }
 }
 
+impl <T1: SortableLock, T2: SortableLock, T3: SortableLock, T4: SortableLock, T5: SortableLock, T6: SortableLock> LockGroup for (T1, T2, T3, T4, T5, T6) {
+    type Locked = (T1::Guard, T2::Guard, T3::Guard, T4::Guard, T5::Guard, T6::Guard);
+
+    fn lock_all(self) -> Self::Locked {
+        let mut locks = [
+            (0, self.0.sort_key()),
+            (1, self.1.sort_key()),
+            (2, self.2.sort_key()),
+            (3, self.3.sort_key()),
+            (4, self.4.sort_key()),
+            (5, self.5.sort_key())
+        ];
+
+        locks.sort_by_key(|(_, key)| *key);
+
+        let mut guards = (None, None, None, None, None, None);
+
+        for (i, _) in locks {
+            match i {
+                0 => guards.0 = Some(self.0.lock_presorted()),
+                1 => guards.1 = Some(self.1.lock_presorted()),
+                2 => guards.2 = Some(self.2.lock_presorted()),
+                3 => guards.3 = Some(self.3.lock_presorted()),
+                4 => guards.4 = Some(self.4.lock_presorted()),
+                5 => guards.5 = Some(self.5.lock_presorted()),
+                _ => unreachable!(),
+            }
+        }
+
+        (
+            guards.0.unwrap(),
+            guards.1.unwrap(),
+            guards.2.unwrap(),
+            guards.3.unwrap(),
+            guards.4.unwrap(),
+            guards.5.unwrap(),
+        )
+    }
+}
+
+impl <
+    T1: SortableLock, T2: SortableLock, T3: SortableLock,
+    T4: SortableLock, T5: SortableLock, T6: SortableLock,
+    T7: SortableLock> LockGroup for (T1, T2, T3, T4, T5, T6, T7) {
+    type Locked = (T1::Guard, T2::Guard, T3::Guard, T4::Guard, T5::Guard, T6::Guard, T7::Guard);
+
+    fn lock_all(self) -> Self::Locked {
+        let mut locks = [
+            (0, self.0.sort_key()),
+            (1, self.1.sort_key()),
+            (2, self.2.sort_key()),
+            (3, self.3.sort_key()),
+            (4, self.4.sort_key()),
+            (5, self.5.sort_key()),
+            (6, self.6.sort_key()),
+        ];
+
+        locks.sort_by_key(|(_, key)| *key);
+
+        let mut guards = (None, None, None, None, None, None, None);
+
+        for (i, _) in locks {
+            match i {
+                0 => guards.0 = Some(self.0.lock_presorted()),
+                1 => guards.1 = Some(self.1.lock_presorted()),
+                2 => guards.2 = Some(self.2.lock_presorted()),
+                3 => guards.3 = Some(self.3.lock_presorted()),
+                4 => guards.4 = Some(self.4.lock_presorted()),
+                5 => guards.5 = Some(self.5.lock_presorted()),
+                6 => guards.6 = Some(self.6.lock_presorted()),
+                _ => unreachable!(),
+            }
+        }
+
+        (
+            guards.0.unwrap(),
+            guards.1.unwrap(),
+            guards.2.unwrap(),
+            guards.3.unwrap(),
+            guards.4.unwrap(),
+            guards.5.unwrap(),
+            guards.6.unwrap(),
+        )
+    }
+}
+
+impl <
+    T1: SortableLock, T2: SortableLock, T3: SortableLock,
+    T4: SortableLock, T5: SortableLock, T6: SortableLock,
+    T7: SortableLock, T8: SortableLock> LockGroup for (T1, T2, T3, T4, T5, T6, T7, T8) {
+    type Locked = (T1::Guard, T2::Guard, T3::Guard, T4::Guard, T5::Guard, T6::Guard, T7::Guard, T8::Guard);
+
+    fn lock_all(self) -> Self::Locked {
+        let mut locks = [
+            (0, self.0.sort_key()),
+            (1, self.1.sort_key()),
+            (2, self.2.sort_key()),
+            (3, self.3.sort_key()),
+            (4, self.4.sort_key()),
+            (5, self.5.sort_key()),
+            (6, self.6.sort_key()),
+            (7, self.7.sort_key()),
+        ];
+
+        locks.sort_by_key(|(_, key)| *key);
+
+        let mut guards = (None, None, None, None, None, None, None, None);
+
+        for (i, _) in locks {
+            match i {
+                0 => guards.0 = Some(self.0.lock_presorted()),
+                1 => guards.1 = Some(self.1.lock_presorted()),
+                2 => guards.2 = Some(self.2.lock_presorted()),
+                3 => guards.3 = Some(self.3.lock_presorted()),
+                4 => guards.4 = Some(self.4.lock_presorted()),
+                5 => guards.5 = Some(self.5.lock_presorted()),
+                6 => guards.6 = Some(self.6.lock_presorted()),
+                7 => guards.7 = Some(self.7.lock_presorted()),
+                _ => unreachable!(),
+            }
+        }
+
+        (
+            guards.0.unwrap(),
+            guards.1.unwrap(),
+            guards.2.unwrap(),
+            guards.3.unwrap(),
+            guards.4.unwrap(),
+            guards.5.unwrap(),
+            guards.6.unwrap(),
+            guards.7.unwrap(),
+        )
+    }
+}
+
+impl <
+    T1: SortableLock, T2: SortableLock, T3: SortableLock,
+    T4: SortableLock, T5: SortableLock, T6: SortableLock,
+    T7: SortableLock, T8: SortableLock, T9: SortableLock> LockGroup for (T1, T2, T3, T4, T5, T6, T7, T8, T9) {
+    type Locked = (T1::Guard, T2::Guard, T3::Guard, T4::Guard, T5::Guard, T6::Guard, T7::Guard, T8::Guard, T9::Guard);
+
+    fn lock_all(self) -> Self::Locked {
+        let mut locks = [
+            (0, self.0.sort_key()),
+            (1, self.1.sort_key()),
+            (2, self.2.sort_key()),
+            (3, self.3.sort_key()),
+            (4, self.4.sort_key()),
+            (5, self.5.sort_key()),
+            (6, self.6.sort_key()),
+            (7, self.7.sort_key()),
+            (8, self.8.sort_key()),
+        ];
+
+        locks.sort_by_key(|(_, key)| *key);
+
+        let mut guards = (None, None, None, None, None, None, None, None, None);
+
+        for (i, _) in locks {
+            match i {
+                0 => guards.0 = Some(self.0.lock_presorted()),
+                1 => guards.1 = Some(self.1.lock_presorted()),
+                2 => guards.2 = Some(self.2.lock_presorted()),
+                3 => guards.3 = Some(self.3.lock_presorted()),
+                4 => guards.4 = Some(self.4.lock_presorted()),
+                5 => guards.5 = Some(self.5.lock_presorted()),
+                6 => guards.6 = Some(self.6.lock_presorted()),
+                7 => guards.7 = Some(self.7.lock_presorted()),
+                8 => guards.8 = Some(self.8.lock_presorted()),
+                _ => unreachable!(),
+            }
+        }
+
+        (
+            guards.0.unwrap(),
+            guards.1.unwrap(),
+            guards.2.unwrap(),
+            guards.3.unwrap(),
+            guards.4.unwrap(),
+            guards.5.unwrap(),
+            guards.6.unwrap(),
+            guards.7.unwrap(),
+            guards.8.unwrap(),
+        )
+    }
+}
+
+impl <
+    T1: SortableLock, T2: SortableLock, T3: SortableLock,
+    T4: SortableLock, T5: SortableLock, T6: SortableLock,
+    T7: SortableLock, T8: SortableLock, T9: SortableLock,
+    T10: SortableLock> LockGroup for (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) {
+    type Locked = (T1::Guard, T2::Guard, T3::Guard, T4::Guard, T5::Guard, T6::Guard, T7::Guard, T8::Guard, T9::Guard, T10::Guard);
+
+    fn lock_all(self) -> Self::Locked {
+        let mut locks = [
+            (0, self.0.sort_key()),
+            (1, self.1.sort_key()),
+            (2, self.2.sort_key()),
+            (3, self.3.sort_key()),
+            (4, self.4.sort_key()),
+            (5, self.5.sort_key()),
+            (6, self.6.sort_key()),
+            (7, self.7.sort_key()),
+            (8, self.8.sort_key()),
+            (9, self.9.sort_key()),
+        ];
+
+        locks.sort_by_key(|(_, key)| *key);
+
+        let mut guards = (None, None, None, None, None, None, None, None, None, None);
+
+        for (i, _) in locks {
+            match i {
+                0 => guards.0 = Some(self.0.lock_presorted()),
+                1 => guards.1 = Some(self.1.lock_presorted()),
+                2 => guards.2 = Some(self.2.lock_presorted()),
+                3 => guards.3 = Some(self.3.lock_presorted()),
+                4 => guards.4 = Some(self.4.lock_presorted()),
+                5 => guards.5 = Some(self.5.lock_presorted()),
+                6 => guards.6 = Some(self.6.lock_presorted()),
+                7 => guards.7 = Some(self.7.lock_presorted()),
+                8 => guards.8 = Some(self.8.lock_presorted()),
+                9 => guards.9 = Some(self.9.lock_presorted()),
+                _ => unreachable!(),
+            }
+        }
+
+        (
+            guards.0.unwrap(),
+            guards.1.unwrap(),
+            guards.2.unwrap(),
+            guards.3.unwrap(),
+            guards.4.unwrap(),
+            guards.5.unwrap(),
+            guards.6.unwrap(),
+            guards.7.unwrap(),
+            guards.8.unwrap(),
+            guards.9.unwrap(),
+        )
+    }
+}
+
