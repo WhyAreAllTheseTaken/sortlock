@@ -1,6 +1,6 @@
 [package]
 name = "sortlock"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
 license = "BSD-3-Clause"
 description = "A crate providing ordered locking."
