@@ -14,7 +14,8 @@ include = [
     "**/*.rs",
     "Cargo.toml",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
 ]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
