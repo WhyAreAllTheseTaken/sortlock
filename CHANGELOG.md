@@ -1,3 +1,15 @@
+<a name="v0.2.0"></a>
+# [Sort Lock 0.2.0 (v0.2.0)](https://github.com/WhyAreAllTheseTaken/sortlock/releases/tag/v0.2.0) - 18 Aug 2024
+
+## Features
+- Added support for `no-std` targets by adding an `std` feature which is enabled by default. Without this, `spin` will be used for locking.
+- Added support for targets that lack support for certain atomic operations by using portable atomics.
+
+**Full Changelog**: https://github.com/WhyAreAllTheseTaken/sortlock/compare/v0.1.0...v0.2.0
+
+[Changes][v0.2.0]
+
+
 <a name="v0.1.0"></a>
 # [Sort Lock 0.1.0 (v0.1.0)](https://github.com/WhyAreAllTheseTaken/sortlock/releases/tag/v0.1.0) - 09 Jul 2024
 
@@ -20,6 +32,7 @@ The initial release of SortLock.
 [Changes][v0.0.0]
 
 
+[v0.2.0]: https://github.com/WhyAreAllTheseTaken/sortlock/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/WhyAreAllTheseTaken/sortlock/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/WhyAreAllTheseTaken/sortlock/tree/v0.0.0
 
