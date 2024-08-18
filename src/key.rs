@@ -1,7 +1,9 @@
-use core::sync::atomic::{AtomicUsize, Ordering};
+use core::sync::atomic::Ordering;
+
+use portable_atomic::AtomicU64;
 
 /// The next sort key to use.
-static NEXT_KEY: AtomicUsize = AtomicUsize::new(0);
+static NEXT_KEY: AtomicU64 = AtomicU64::new(0);
 
 /// A sort key for sorting locks.
 /// This must be unique to each lock.
@@ -16,7 +18,7 @@ static NEXT_KEY: AtomicUsize = AtomicUsize::new(0);
 /// assert_ne!(key, key2);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct SortKey(usize);
+pub struct SortKey(u64);
 
 impl SortKey {
     /// Creates a new unique sort key.
