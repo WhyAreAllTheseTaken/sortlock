@@ -1,6 +1,6 @@
 [package]
 name = "sortlock"
-version = "0.1.0"
+version = "0.2.0-a1"
 edition = "2021"
 license = "BSD-3-Clause"
 description = "A crate providing ordered locking."
@@ -21,4 +21,9 @@ include = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+spin = { version = "0.9.8", default-features = false, features = ["mutex", "spin_mutex", "rwlock"] }
+
+[features]
+default = ["std"]
+std = []
 

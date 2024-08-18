@@ -39,6 +39,14 @@
 //! println!("{}", *guard1);
 //! println!("{}", *guard2);
 //! ```
+//! 
+//! # Feature Flags
+//! To support `no-std` environments this crate can fall back to using `spin`'s `Mutex` and `RwLock` types. This can be done by disabiling the `std` feature.
+
+#![cfg_attr(not(test), no_std)]
+
+#[cfg(feature = "std")]
+extern crate std;
 
 mod mutex;
 mod key;
@@ -90,7 +98,7 @@ impl <T1: SortableLock, T2: SortableLock> LockGroup for (T1, T2) {
     fn lock_all(self) -> Self::Locked {
         let mut locks = [(0, self.0.sort_key()), (1, self.1.sort_key())];
 
-        locks.sort_by_key(|(_, key)| *key);
+        locks.sort_unstable_by_key(|(_, key)| *key);
 
         let mut guards = (None, None);
 
@@ -112,7 +120,7 @@ impl <T1: SortableLock, T2: SortableLock, T3: SortableLock> LockGroup for (T1, T
     fn lock_all(self) -> Self::Locked {
         let mut locks = [(0, self.0.sort_key()), (1, self.1.sort_key()), (2, self.2.sort_key())];
 
-        locks.sort_by_key(|(_, key)| *key);
+        locks.sort_unstable_by_key(|(_, key)| *key);
 
         let mut guards = (None, None, None);
 
@@ -140,7 +148,7 @@ impl <T1: SortableLock, T2: SortableLock, T3: SortableLock, T4: SortableLock> Lo
             (3, self.3.sort_key())
         ];
 
-        locks.sort_by_key(|(_, key)| *key);
+        locks.sort_unstable_by_key(|(_, key)| *key);
 
         let mut guards = (None, None, None, None);
 
@@ -175,7 +183,7 @@ impl <T1: SortableLock, T2: SortableLock, T3: SortableLock, T4: SortableLock, T5
             (4, self.4.sort_key()),
         ];
 
-        locks.sort_by_key(|(_, key)| *key);
+        locks.sort_unstable_by_key(|(_, key)| *key);
 
         let mut guards = (None, None, None, None, None);
 
@@ -213,7 +221,7 @@ impl <T1: SortableLock, T2: SortableLock, T3: SortableLock, T4: SortableLock, T5
             (5, self.5.sort_key())
         ];
 
-        locks.sort_by_key(|(_, key)| *key);
+        locks.sort_unstable_by_key(|(_, key)| *key);
 
         let mut guards = (None, None, None, None, None, None);
 
@@ -257,7 +265,7 @@ impl <
             (6, self.6.sort_key()),
         ];
 
-        locks.sort_by_key(|(_, key)| *key);
+        locks.sort_unstable_by_key(|(_, key)| *key);
 
         let mut guards = (None, None, None, None, None, None, None);
 
@@ -304,7 +312,7 @@ impl <
             (7, self.7.sort_key()),
         ];
 
-        locks.sort_by_key(|(_, key)| *key);
+        locks.sort_unstable_by_key(|(_, key)| *key);
 
         let mut guards = (None, None, None, None, None, None, None, None);
 
@@ -354,7 +362,7 @@ impl <
             (8, self.8.sort_key()),
         ];
 
-        locks.sort_by_key(|(_, key)| *key);
+        locks.sort_unstable_by_key(|(_, key)| *key);
 
         let mut guards = (None, None, None, None, None, None, None, None, None);
 
@@ -408,7 +416,7 @@ impl <
             (9, self.9.sort_key()),
         ];
 
-        locks.sort_by_key(|(_, key)| *key);
+        locks.sort_unstable_by_key(|(_, key)| *key);
 
         let mut guards = (None, None, None, None, None, None, None, None, None, None);
 

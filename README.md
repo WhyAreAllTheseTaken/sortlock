@@ -20,7 +20,7 @@ To allow for sorted locking, this crates provides two new types of lock:
 - `SortMuted` - A sorted version of `Mutex`.
 - `SortRwLock` - A sorted version of `RwLock`.
 
-# Examples
+## Examples
 ```rust
 use sortlock::{SortMutex, LockGroup};
 
@@ -41,3 +41,7 @@ let (guard2, guard1) = (lock2.lock(), lock1.lock()).lock_all();
 println!("{}", *guard1);
 println!("{}", *guard2);
 ```
+
+## Feature Flags
+To support `no-std` environments this crate can fall back to using `spin`'s `Mutex` and `RwLock` types. This can be done by disabiling the `std` feature.
+

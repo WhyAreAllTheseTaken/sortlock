@@ -1,4 +1,10 @@
-use std::{fmt::{self, Debug, Display, Formatter}, sync::{Mutex, MutexGuard}};
+use core::fmt::{self, Debug, Display, Formatter};
+
+#[cfg(feature = "std")]
+use std::sync::{Mutex, MutexGuard};
+
+#[cfg(not(feature = "std"))]
+use spin::{Mutex, MutexGuard};
 
 use crate::{LockGroup, SortKey, SortableLock};
 
@@ -98,9 +104,15 @@ impl <'l, T> SortableLock for SortMutexGuard<'l, T> {
         self.lock.key
     }
 
+    #[cfg(feature = "std")]
     fn lock_presorted(&self) -> Self::Guard {
         self.lock.mutex.lock()
             .expect("Failed to lock mutex: mutex is poisoned.")
+    }
+    
+    #[cfg(not(feature = "std"))]
+    fn lock_presorted(&self) -> Self::Guard {
+        self.lock.mutex.lock()
     }
 }
 
@@ -119,7 +131,7 @@ mod tests {
 
         println!("{} {}", guard1, guard2);
     }
-    
+   
     #[test]
     fn test_deadlock() -> Result<(), Box<dyn Any + Send + 'static>> {
         let lock1 = Arc::new(SortMutex::new(0));

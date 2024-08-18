@@ -18,5 +18,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build
       run: cargo build --verbose
-    - name: Run tests
+    - name: Run tests (spin)
+      run: cargo test --verbose --no-default-features
+    - name: Run tests (std)
       run: cargo test --verbose
+

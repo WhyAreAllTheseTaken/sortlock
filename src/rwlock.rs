@@ -1,4 +1,10 @@
-use std::{fmt::{self, Debug, Display, Formatter}, sync::{RwLock, RwLockReadGuard, RwLockWriteGuard}};
+use core::fmt::{self, Debug, Display, Formatter};
+
+#[cfg(feature = "std")]
+use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
+#[cfg(not(feature = "std"))]
+use spin::{RwLock, RwLockWriteGuard, RwLockReadGuard};
+
 
 use crate::{LockGroup, SortKey, SortableLock};
 
@@ -120,9 +126,15 @@ impl <'l, T> SortableLock for SortReadGuard<'l, T> {
         self.lock.key
     }
 
+    #[cfg(feature = "std")]
     fn lock_presorted(&self) -> Self::Guard {
         self.lock.mutex.read()
             .expect("Failed to lock mutex.")
+    }
+    
+    #[cfg(not(feature = "std"))]
+    fn lock_presorted(&self) -> Self::Guard {
+        self.lock.mutex.read()
     }
 }
 
@@ -139,9 +151,15 @@ impl <'l, T> SortableLock for SortWriteGuard<'l, T> {
         self.lock.key
     }
 
+    #[cfg(feature = "std")]
     fn lock_presorted(&self) -> Self::Guard {
         self.lock.mutex.write()
             .expect("Failed to lock mutex.")
+    }
+    
+    #[cfg(not(feature = "std"))]
+    fn lock_presorted(&self) -> Self::Guard {
+        self.lock.mutex.write()
     }
 }
 
