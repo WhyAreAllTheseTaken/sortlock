@@ -22,7 +22,7 @@ include = [
 
 [dependencies]
 portable-atomic = "1.7.0"
-spin = { version = "0.10.0", default-features = false, features = ["mutex", "spin_mutex", "rwlock"] }
+spin = { version = "0.12.0", default-features = false, features = ["mutex", "spin_mutex", "rwlock"] }
 
 [features]
 default = ["std"]
